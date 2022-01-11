@@ -163,12 +163,10 @@ ashita.events.register('d3d_present', 'present_cb', function ()
         imgui.ShowHelp('First entry is what HP% to force Manuever 1 to light, second entry is what HP% to go back to your previous Maneuver 1. First entry 0 to disable.');
 
         imgui.Checkbox('Auto Deploy', manager.autodeploy);imgui.SameLine();imgui.Checkbox('Auto Cooldown', manager.autocooldown);imgui.SameLine();imgui.Indent(300);
-        if (imgui.Button(manager.enabled)) then --colors not quite working the way i want 
+        if (imgui.Button(manager.enabled)) then
             if (manager.enabled == 'Disabled') then
-                --imgui.PushStyleColor(ImGuiCol_Button, { 0.2, 0.7, 0.0, 1.0 });
                 manager.enabled = 'Enabled';
             else
-                --imgui.PushStyleColor(ImGuiCol_Button, { 1.0, 0.4, 0.4, 1.0 });
                 manager.enabled = 'Disabled';
             end
         end
@@ -208,12 +206,19 @@ end
 
 ashita.events.register('command', 'command_cb', function (e)
     local args = e.command:args();
-    if (#args == 0) then
+    if (#args == 0) or ((args[1] ~= '/puphelper') and (args[1] ~= '/ph')) then
         return;
     end
-    if (args[1] == '/puphelper') or (args[1] == '/ph') then
+
+    e.blocked = true;
+
+    if (#args <= 1) and ((args[1] == '/puphelper') or (args[1] == '/ph')) then
         manager.is_open[1] = not manager.is_open[1];
-    else
-        return;
+    elseif (#args >= 2 and args[2]:any('toggle')) then
+        if (manager.enabled == 'Enabled') then
+            manager.enabled = 'Disabled';
+        elseif (manager.enabled == 'Disabled') then
+            manager.enabled = 'Enabled';
+        end
     end
 end);
