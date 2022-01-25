@@ -1,6 +1,6 @@
 addon.name      = 'puphelper';
 addon.author    = 'GetAwayCoxn';
-addon.version   = '1.0';
+addon.version   = '1.01';
 addon.desc      = 'Does puppetmaster things. Based on my runehelper addon for Ashita v4, inspired by pupper addon by Towbes for Ashita v3';
 addon.link      = 'https://github.com/GetAwayCoxn/Pup-Helper';
 
@@ -64,6 +64,9 @@ ashita.events.register('d3d_present', 'present_cb', function ()
 			    if (buffString ~= nil) and (buffString == manager.maneuvers[b][1]) then
                     manager.maneuvers[b][2] = manager.maneuvers[b][2] + 1;
                     total = total + 1;
+                end
+                if (buffString ~= nil) and (buffString == 'Mounted') then
+                    manager.enabled = 'Disabled';
                 end
             end
         end
@@ -163,10 +166,12 @@ ashita.events.register('d3d_present', 'present_cb', function ()
         imgui.ShowHelp('First entry is what HP% to force Manuever 1 to light, second entry is what HP% to go back to your previous Maneuver 1. First entry 0 to disable.');
 
         imgui.Checkbox('Auto Deploy', manager.autodeploy);imgui.SameLine();imgui.Checkbox('Auto Cooldown', manager.autocooldown);imgui.SameLine();imgui.Indent(300);
-        if (imgui.Button(manager.enabled)) then
+        if (imgui.Button(manager.enabled)) then --colors not quite working the way i want 
             if (manager.enabled == 'Disabled') then
+                --imgui.PushStyleColor(ImGuiCol_Button, { 0.2, 0.7, 0.0, 1.0 });
                 manager.enabled = 'Enabled';
             else
+                --imgui.PushStyleColor(ImGuiCol_Button, { 1.0, 0.4, 0.4, 1.0 });
                 manager.enabled = 'Disabled';
             end
         end
