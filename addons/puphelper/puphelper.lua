@@ -1,6 +1,6 @@
 addon.name      = 'puphelper';
 addon.author    = 'GetAwayCoxn';
-addon.version   = '1.01';
+addon.version   = '1.02';
 addon.desc      = 'Does puppetmaster things. Based on my runehelper addon for Ashita v4, inspired by pupper addon by Towbes for Ashita v3';
 addon.link      = 'https://github.com/GetAwayCoxn/Pup-Helper';
 
@@ -19,7 +19,7 @@ local manager = {
     menu_holders = {-1,-1,-1},
     menu1old = {-1},
     repair = {0,},
-    autodeploy = {true,},
+    autodeploy = {false,},
     autocooldown = {true,},
     autolight = {0,90},
 };
@@ -43,7 +43,11 @@ ashita.events.register('d3d_present', 'present_cb', function ()
 
     -- Do Work here if Enabled and before the is_open check
     if (manager.enabled == 'Enabled') and (PetID ~= 0 or PetID ~= nil) then
-        
+        -- Don't do stuff if mob is basically dead (trying to prevent hangs when killing ambu stuff and zoning right away)
+        --[[if (AshitaCore:GetMemoryManager():GetEntity():GetStatus(PetID) == 1) and (AshitaCore:GetMemoryManager():GetEntity():GetHPPercent(TargetID) <= 1) then
+            return;
+        end]]
+
         --Do auto Deploy
         if (TargetID ~= 0 or TargetID ~= nil) and (manager.autodeploy[1] == true) and (AshitaCore:GetMemoryManager():GetEntity():GetStatus(AshitaCore:GetMemoryManager():GetParty():GetMemberTargetIndex(0)) == 1) and (AshitaCore:GetMemoryManager():GetEntity():GetStatus(PetID) == 0) and (AshitaCore:GetMemoryManager():GetEntity():GetHPPercent(TargetID) > 10) then
             AshitaCore:GetChatManager():QueueCommand(1, '/ja "Deploy" <t>');
@@ -64,9 +68,10 @@ ashita.events.register('d3d_present', 'present_cb', function ()
 			    if (buffString ~= nil) and (buffString == manager.maneuvers[b][1]) then
                     manager.maneuvers[b][2] = manager.maneuvers[b][2] + 1;
                     total = total + 1;
-                end
-                if (buffString ~= nil) and (buffString == 'Mounted') then
+                elseif (buffString ~= nil) and (buffString == 'Mounted') then
                     manager.enabled = 'Disabled';
+                elseif (buffString ~= nil) and (buffString == 'Sleep') then
+                    return;
                 end
             end
         end
@@ -129,7 +134,7 @@ ashita.events.register('d3d_present', 'present_cb', function ()
     end
 
     imgui.SetNextWindowSize(manager.size);
-    if (imgui.Begin('RuneHelper', manager.is_open, ImGuiWindowFlags_NoDecoration)) then
+    if (imgui.Begin('Puphelper', manager.is_open, ImGuiWindowFlags_NoDecoration)) then
         imgui.TextColored(manager.text_color, tostring(' +3 oils:  ' .. oils .. '                           Use /ph to hide'));
 
         local selection1 = {manager.menu_holders[1] + 1};
@@ -166,12 +171,10 @@ ashita.events.register('d3d_present', 'present_cb', function ()
         imgui.ShowHelp('First entry is what HP% to force Manuever 1 to light, second entry is what HP% to go back to your previous Maneuver 1. First entry 0 to disable.');
 
         imgui.Checkbox('Auto Deploy', manager.autodeploy);imgui.SameLine();imgui.Checkbox('Auto Cooldown', manager.autocooldown);imgui.SameLine();imgui.Indent(300);
-        if (imgui.Button(manager.enabled)) then --colors not quite working the way i want 
+        if (imgui.Button(manager.enabled)) then
             if (manager.enabled == 'Disabled') then
-                --imgui.PushStyleColor(ImGuiCol_Button, { 0.2, 0.7, 0.0, 1.0 });
                 manager.enabled = 'Enabled';
             else
-                --imgui.PushStyleColor(ImGuiCol_Button, { 1.0, 0.4, 0.4, 1.0 });
                 manager.enabled = 'Disabled';
             end
         end
