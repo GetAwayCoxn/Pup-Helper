@@ -1,6 +1,6 @@
 addon.name      = 'puphelper';
 addon.author    = 'GetAwayCoxn';
-addon.version   = '1.02';
+addon.version   = '1.03';
 addon.desc      = 'Does puppetmaster things. Based on my runehelper addon for Ashita v4, inspired by pupper addon by Towbes for Ashita v3';
 addon.link      = 'https://github.com/GetAwayCoxn/Pup-Helper';
 
@@ -227,6 +227,16 @@ ashita.events.register('command', 'command_cb', function (e)
             manager.enabled = 'Disabled';
         elseif (manager.enabled == 'Disabled') then
             manager.enabled = 'Enabled';
+        end
+    elseif (#args >= 2 and args[2]:any('set')) then
+        local eles = {'dark','light','earth','wind','fire','ice','thunder','water'};
+        for x = 1, #eles do
+            for y = 1, #manager.menu_holders do
+                if args[y+2] == nil then
+                elseif string.lower(args[y+2]) == eles[x] then
+                    manager.menu_holders[y] = x - 1;
+                end
+            end
         end
     end
 end);
