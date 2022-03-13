@@ -1,4 +1,4 @@
-addon.name      = 'puphelper';
+addon.name      = 'Puphelper';
 addon.author    = 'GetAwayCoxn';
 addon.version   = '1.03';
 addon.desc      = 'Does puppetmaster things. Based on my runehelper addon for Ashita v4, inspired by pupper addon by Towbes for Ashita v3';
@@ -140,7 +140,7 @@ ashita.events.register('d3d_present', 'present_cb', function ()
         local selection1 = {manager.menu_holders[1] + 1};
         if (imgui.Combo('Maneuver 1', selection1, 'None\0Dark\0Light\0Earth\0Wind\0Fire\0Ice\0Thunder\0Water\0')) then
             manager.menu_holders[1] = selection1[1] - 1;
-            manager.menu1old[1] = selection1[1] - 1;
+            manager.menu1olders[1] = selection1[1] - 1;
         end
         
         local selection2 = {manager.menu_holders[2] + 1};
